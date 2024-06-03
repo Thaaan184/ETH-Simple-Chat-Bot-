@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Chatbot</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8 col-md-10">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h1>Crypto Chatbot</h1>
+                        <a href="/help" class="btn btn-info btn-sm">Help</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="chat-box" id="chat-box"></div>
+                        <div class="input-group mt-3">
+                            <input type="text" class="form-control" id="user-input" placeholder="Type a message..."
+                                autofocus>
+                            <div class="input-group-append">
+                                <button class="btn btn-success" onclick="sendMessage()">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userInput })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const chatBox = document.getElementById('chat-box');
+                    const userMessage = document.createElement('div');
+                    userMessage.className = 'alert alert-primary user-message';
+                    userMessage.textContent = userInput;
+                    chatBox.appendChild(userMessage);
+
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'alert alert-secondary bot-message';
+                    botMessage.innerHTML = data.response;
+                    chatBox.appendChild(botMessage);
+
+                    document.getElementById('user-input').value = '';
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }
+    </script>
+</body>
+
+</html>
